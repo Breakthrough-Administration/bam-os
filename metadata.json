@@ -1,0 +1,6 @@
+{
+  "name": "Breakthrough Manager OS",
+  "description": "Enterprise practice management and clinical operations system for Australian NDIS registered providers, allied health organisations, and Positive Behaviour Support (PBS) clinics.",
+  "requestFramePermissions": ["microphone", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

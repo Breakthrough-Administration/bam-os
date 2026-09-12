@@ -1,0 +1,145 @@
+{
+  "entities": {
+    "userProfile": {
+      "title": "Clinical Staff Profile",
+      "description": "Authenticated clinical staff and practice management user profile",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Firebase Auth user unique identifier",
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Corporate or clinical practitioner email address",
+          "maxLength": 256
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Practitioner full name and qualifications",
+          "maxLength": 128
+        },
+        "role": {
+          "type": "string",
+          "description": "NDIS practitioner access tier",
+          "enum": ["lead_clinician", "pbs_practitioner", "allied_health", "support_worker", "practice_manager", "compliance_officer"]
+        },
+        "tenantId": {
+          "type": "string",
+          "description": "Provider organizational branch or tenant identifier",
+          "maxLength": 64
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO timestamp of user profile initialization"
+        }
+      },
+      "required": ["id", "email", "displayName", "role", "tenantId", "createdAt"]
+    },
+    "participant": {
+      "title": "NDIS Participant Dossier",
+      "description": "Participant details, NDIS funding dates, and clinical support profile",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "tenantId": { "type": "string", "maxLength": 64 },
+        "fullName": { "type": "string", "maxLength": 128 },
+        "ndisNumber": { "type": "string", "maxLength": 16 },
+        "dateOfBirth": { "type": "string", "maxLength": 32 },
+        "primaryDisability": { "type": "string", "maxLength": 128 },
+        "mmmRegion": { "type": "string", "enum": ["MMM1", "MMM2", "MMM3", "MMM4", "MMM5", "MMM6", "MMM7"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "tenantId", "fullName", "ndisNumber", "createdAt"]
+    },
+    "incident": {
+      "title": "NDIS Reportable Incident Record",
+      "description": "Incident report with 24-hour statutory priority escalation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "tenantId": { "type": "string", "maxLength": 64 },
+        "incidentNumber": { "type": "string", "maxLength": 32 },
+        "participantId": { "type": "string", "maxLength": 64 },
+        "participantName": { "type": "string", "maxLength": 128 },
+        "category": { "type": "string", "maxLength": 64 },
+        "is24HourReportable": { "type": "boolean" },
+        "occurredAt": { "type": "string", "format": "date-time" },
+        "summary": { "type": "string", "maxLength": 256 },
+        "detailedDescription": { "type": "string", "maxLength": 4000 },
+        "immediateActionsTaken": { "type": "string", "maxLength": 2000 },
+        "status": { "type": "string", "enum": ["draft", "lodged_internal", "escalated_24h_commission", "under_investigation", "closed"] },
+        "ndisCommissionEscalated": { "type": "boolean" },
+        "ndisReferenceNumber": { "type": "string", "maxLength": 64 },
+        "reportedByUserId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "tenantId", "incidentNumber", "participantId", "category", "is24HourReportable", "occurredAt", "status", "reportedByUserId", "createdAt"]
+    },
+    "caseNote": {
+      "title": "SOAP Clinical Case Note",
+      "description": "Evidence-backed clinical session documentation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "tenantId": { "type": "string", "maxLength": 64 },
+        "participantId": { "type": "string", "maxLength": 64 },
+        "practitionerId": { "type": "string", "maxLength": 128 },
+        "practitionerName": { "type": "string", "maxLength": 128 },
+        "sessionDate": { "type": "string", "maxLength": 32 },
+        "subjective": { "type": "string", "maxLength": 4000 },
+        "objective": { "type": "string", "maxLength": 4000 },
+        "assessment": { "type": "string", "maxLength": 4000 },
+        "plan": { "type": "string", "maxLength": 4000 },
+        "ndisLineItem": { "type": "string", "maxLength": 32 },
+        "durationMinutes": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "tenantId", "participantId", "practitionerId", "sessionDate", "createdAt"]
+    },
+    "workspaceResource": {
+      "title": "Google Workspace Synchronised Clinical Resource",
+      "description": "Integration metadata for linked Google Docs, Sheets, Calendar events, Drive folders, and Meet links",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "tenantId": { "type": "string", "maxLength": 64 },
+        "serviceType": { "type": "string", "enum": ["drive", "sheets", "gmail", "calendar", "docs", "slides", "tasks", "chat", "forms", "keep", "meet", "contacts"] },
+        "resourceId": { "type": "string", "maxLength": 256 },
+        "title": { "type": "string", "maxLength": 256 },
+        "resourceLink": { "type": "string", "maxLength": 512 },
+        "linkedParticipantId": { "type": "string", "maxLength": 64 },
+        "createdByUserId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "tenantId", "serviceType", "resourceId", "title", "createdByUserId", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "userProfile",
+      "description": "User profile collection isolated per authenticated user"
+    },
+    "/tenants/{tenantId}/participants/{participantId}": {
+      "schema": "participant",
+      "description": "Clinical participants partition isolated by provider branch"
+    },
+    "/tenants/{tenantId}/incidents/{incidentId}": {
+      "schema": "incident",
+      "description": "Statutory 24h and general reportable incident register"
+    },
+    "/tenants/{tenantId}/caseNotes/{caseNoteId}": {
+      "schema": "caseNote",
+      "description": "SOAP clinical progress notes partition"
+    },
+    "/tenants/{tenantId}/workspaceResources/{resourceId}": {
+      "schema": "workspaceResource",
+      "description": "Linked Google Workspace clinical resources index"
+    }
+  }
+}

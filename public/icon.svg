@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="128" fill="#0f172a" />
+  <path d="M128 256h256v128h-256z" fill="#059669" />
+  <path d="M192 128h128v256h-128z" fill="#10b981" />
+  <text x="256" y="280" fill="white" font-family="system-ui, sans-serif" font-weight="900" font-size="160" text-anchor="middle" dominant-baseline="middle">BM</text>
+</svg>

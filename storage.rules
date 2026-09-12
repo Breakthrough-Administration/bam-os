@@ -1,0 +1,54 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper to retrieve user profile directly from Cloud Firestore (cross-service lookup)
+    function getUserData() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (getUserData().role == 'ADMIN' || getUserData().role == 'lead_clinician' || getUserData().role == 'practice_manager');
+    }
+
+    function isPractitioner() {
+      return isSignedIn() && (
+        getUserData().role in [
+          'ADMIN',
+          'lead_clinician',
+          'pbs_practitioner',
+          'allied_health',
+          'practice_manager',
+          'compliance_officer'
+        ]
+      );
+    }
+
+    // Default deny
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    // Participant clinical dossiers, BSP assessments, and evidence files
+    match /clients/{clientId}/{allPaths=**} {
+      allow read: if isPractitioner();
+      allow write: if isPractitioner() && request.resource.size < 15 * 1024 * 1024;
+    }
+
+    // Behaviour Support Plans (BSP) and Restrictive Practice Panel evidence
+    match /bsp/{bspId}/{allPaths=**} {
+      allow read: if isPractitioner();
+      allow write: if isPractitioner() && request.resource.size < 25 * 1024 * 1024;
+    }
+
+    // Statutory 24-hour incident photographic or medical evidence
+    match /incidents/{incidentId}/{allPaths=**} {
+      allow read: if isPractitioner();
+      allow write: if isPractitioner() && request.resource.size < 10 * 1024 * 1024;
+    }
+  }
+}
