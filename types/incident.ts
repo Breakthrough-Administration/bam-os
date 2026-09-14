@@ -86,6 +86,10 @@ export interface NDISCommissionEscalation {
   isDeadlineBreached?: boolean;
   commissionPortalSubmissionNotes?: string;
   notificationStatus: 'pending_submission' | 'notified_within_24h' | 'overdue' | 'not_applicable';
+  fiveDayReportLodged?: boolean;
+  fiveDayReportLodgedAt?: string;
+  fiveDayCommissionReferenceNumber?: string;
+  fiveDayReportNotes?: string;
 }
 
 export interface IncidentReport {
@@ -125,6 +129,12 @@ export interface IncidentReport {
   riskRating?: 'extreme' | 'high' | 'medium' | 'low';
   createdBy?: string;
   updatedAt?: string;
+  signature?: {
+    signedBy: string;
+    timestamp: string;
+    hash: string;
+    role?: string;
+  };
 }
 
 export interface IncidentSubmissionPayload {

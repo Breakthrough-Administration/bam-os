@@ -48,6 +48,6 @@ export async function seedFirestoreIfEmpty() {
       console.log('Seeding complete.');
     }
   } catch (err) {
-    console.error('Failed to seed Firestore:', err);
+    console.warn('Firestore seeding notice (offline or permission check):', err);
   }
 }

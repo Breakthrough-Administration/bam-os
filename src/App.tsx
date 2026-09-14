@@ -19,6 +19,7 @@ const SCHADSRosterModule = lazy(() => import('../components/features/SCHADSRoste
 const AuditComplianceModule = lazy(() => import('../components/features/AuditComplianceModule').then(m => ({ default: m.AuditComplianceModule })));
 const GoogleWorkspaceHub = lazy(() => import('../components/features/GoogleWorkspaceHub').then(m => ({ default: m.GoogleWorkspaceHub })));
 const SecurityRolloutModule = lazy(() => import('../components/features/SecurityRolloutModule').then(m => ({ default: m.SecurityRolloutModule })));
+const TutorialsAcademyModule = lazy(() => import('../components/features/TutorialsAcademyModule').then(m => ({ default: m.TutorialsAcademyModule })));
 
 export default function App() {
   const { activeTab } = useManagementStore();
@@ -48,6 +49,8 @@ export default function App() {
         return <GoogleWorkspaceHub />;
       case 'security_rollout':
         return <SecurityRolloutModule />;
+      case 'tutorials_academy':
+        return <TutorialsAcademyModule />;
       default:
         return <ClinicalSupervisorDashboard />;
     }

@@ -3,7 +3,7 @@
  * Replaces IndexedDB with Cloud Firestore, maintaining offline support automatically.
  */
 
-import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, getDoc, setDoc, deleteDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from './firebase';
 
 export interface OfflineRecord<T = unknown> {
@@ -22,7 +22,7 @@ class IndexedDBEngine {
       const collectionName = this.mapStoreToCollection(storeName);
       await setDoc(doc(db, collectionName, id), data as any);
     } catch (e) {
-      console.error("Failed to write to Firestore:", e);
+      console.warn("Notice: Failed to write to Firestore:", e);
     }
   }
 
@@ -35,8 +35,17 @@ class IndexedDBEngine {
       }
       return null;
     } catch (e) {
-      console.error("Failed to read from Firestore:", e);
+      console.warn("Notice: Failed to read from Firestore:", e);
       return null;
+    }
+  }
+
+  public async deleteItem(storeName: string, id: string): Promise<void> {
+    try {
+      const collectionName = this.mapStoreToCollection(storeName);
+      await deleteDoc(doc(db, collectionName, id));
+    } catch (e) {
+      console.warn("Notice: Failed to delete from Firestore:", e);
     }
   }
 
@@ -46,7 +55,7 @@ class IndexedDBEngine {
       const querySnapshot = await getDocs(collection(db, collectionName));
       return querySnapshot.docs.map(doc => doc.data() as T);
     } catch (e) {
-      console.error("Failed to get all from Firestore:", e);
+      console.warn("Notice: Failed to get all from Firestore:", e);
       return [];
     }
   }

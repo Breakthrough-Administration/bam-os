@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ShieldAlert,
   Wifi,
@@ -8,6 +8,10 @@ import {
   Search,
   PlusCircle,
   FileCheck2,
+  GraduationCap,
+  Lock,
+  Unlock,
+  KeyRound,
 } from 'lucide-react';
 import { useManagementStore } from '../stores';
 import { UserRole } from '../types';
@@ -21,11 +25,28 @@ export const Header: React.FC<{ onOpenQuickAction: () => void }> = ({ onOpenQuic
     pendingSyncCount,
     incidents,
     setCommandPaletteOpen,
+    setActiveTab,
   } = useManagementStore();
+
+  const [isFieldLocked, setIsFieldLocked] = useState(false);
+  const [pinInput, setPinInput] = useState('');
+  const [pinError, setPinError] = useState(false);
+  const FIELD_PIN = '1234';
 
   const criticalIncidentsCount = incidents.filter(
     (inc) => inc.is24HourReportable && inc.status !== 'closed'
   ).length;
+
+  const handleUnlockPin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pinInput === FIELD_PIN || pinInput === '0000') {
+      setIsFieldLocked(false);
+      setPinInput('');
+      setPinError(false);
+    } else {
+      setPinError(true);
+    }
+  };
 
   const roles: { key: UserRole; label: string }[] = [
     { key: 'lead_clinician', label: 'Lead Clinician (PBS Specialist)' },
@@ -42,8 +63,13 @@ export const Header: React.FC<{ onOpenQuickAction: () => void }> = ({ onOpenQuic
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Logo & System Brand */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-600 to-teal-800 flex items-center justify-center font-black text-white shadow-inner tracking-wider text-lg border border-emerald-500/30">
-              BM
+            <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-emerald-500/40 shadow-sm shrink-0 bg-slate-950 flex items-center justify-center group">
+              <img
+                src="/breakthrough-brand.svg"
+                alt="Breakthrough Clinical Brand"
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
+              />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -128,6 +154,26 @@ export const Header: React.FC<{ onOpenQuickAction: () => void }> = ({ onOpenQuic
               </select>
             </div>
 
+            {/* Academy & Tutorials Button */}
+            <button
+              onClick={() => setActiveTab('tutorials_academy')}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-teal-500/15 hover:bg-teal-500/25 text-teal-300 border border-teal-500/30 text-xs font-semibold transition"
+              title="Open Breakthrough Clinician Academy & Tutorials"
+            >
+              <GraduationCap className="w-3.5 h-3.5 text-teal-400" />
+              <span className="hidden xl:inline">Tutorials</span>
+            </button>
+
+            {/* Field Visit Quick PIN Lock */}
+            <button
+              onClick={() => setIsFieldLocked(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-medium transition"
+              title="Quick Lock Session (For Clinicians Stepping Away on Community Visits)"
+            >
+              <Lock className="w-3.5 h-3.5 text-slate-400" />
+              <span className="hidden 2xl:inline">Field Lock</span>
+            </button>
+
             {/* Quick Record Action */}
             <PWAInstallButton />
             <button
@@ -140,6 +186,58 @@ export const Header: React.FC<{ onOpenQuickAction: () => void }> = ({ onOpenQuic
           </div>
         </div>
       </div>
+
+      {/* Field Visit Quick PIN Lock Overlay Modal */}
+      {isFieldLocked && (
+        <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="max-w-sm w-full p-6 rounded-2xl bg-slate-900 border-2 border-teal-500/40 shadow-2xl space-y-4 text-center">
+            <div className="w-12 h-12 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30 flex items-center justify-center mx-auto">
+              <Lock className="w-6 h-6 text-teal-400" />
+            </div>
+
+            <div className="space-y-1">
+              <h2 className="text-base font-bold text-white tracking-tight">Clinician Field Mode Active</h2>
+              <p className="text-xs text-slate-400">
+                Participant records are securely locked while stepping away during community/home visits.
+              </p>
+            </div>
+
+            <form onSubmit={handleUnlockPin} className="space-y-3">
+              <div>
+                <input
+                  type="password"
+                  maxLength={4}
+                  autoFocus
+                  placeholder="Enter 4-digit PIN (default: 1234)"
+                  value={pinInput}
+                  onChange={(e) => {
+                    setPinInput(e.target.value);
+                    setPinError(false);
+                  }}
+                  className="w-full text-center py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono text-sm tracking-widest focus:outline-none focus:border-teal-500 transition"
+                />
+                {pinError && (
+                  <p className="text-[11px] text-rose-400 mt-1 font-medium">
+                    Incorrect PIN. Try 1234 or 0000.
+                  </p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs shadow-lg transition flex items-center justify-center gap-2"
+              >
+                <Unlock className="w-3.5 h-3.5" />
+                <span>Unlock Clinical Session</span>
+              </button>
+            </form>
+
+            <p className="text-[10px] text-slate-500">
+              Demo PIN: <span className="font-mono text-teal-400">1234</span>. Encrypted offline data remains intact.
+            </p>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

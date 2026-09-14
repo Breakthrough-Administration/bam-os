@@ -11,7 +11,8 @@ export type MainNavTab =
   | 'schads_roster'
   | 'audit_compliance'
   | 'workspace_hub'
-  | 'security_rollout';
+  | 'security_rollout'
+  | 'tutorials_academy';
 
 export interface UISlice {
   activeTab: MainNavTab;

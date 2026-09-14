@@ -8,6 +8,7 @@ import { BillingSlice, createBillingSlice } from './slices/billingSlice';
 import { HRSlice, createHRSlice } from './slices/hrSlice';
 import { SyncSlice, createSyncSlice } from './slices/syncSlice';
 import { UISlice, createUISlice } from './slices/uiSlice';
+import { AuditSlice, createAuditSlice } from './slices/auditSlice';
 
 export type ManagementStore = AuthSlice &
   ClientsSlice &
@@ -17,7 +18,8 @@ export type ManagementStore = AuthSlice &
   BillingSlice &
   HRSlice &
   SyncSlice &
-  UISlice;
+  UISlice &
+  AuditSlice;
 
 export const useManagementStore = create<ManagementStore>()((...args) => ({
   ...createAuthSlice(...args),
@@ -29,4 +31,5 @@ export const useManagementStore = create<ManagementStore>()((...args) => ({
   ...createHRSlice(...args),
   ...createSyncSlice(...args),
   ...createUISlice(...args),
+  ...createAuditSlice(...args),
 }));

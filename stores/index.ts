@@ -8,3 +8,4 @@ export * from './slices/billingSlice';
 export * from './slices/hrSlice';
 export * from './slices/syncSlice';
 export * from './slices/uiSlice';
+export * from './slices/auditSlice';

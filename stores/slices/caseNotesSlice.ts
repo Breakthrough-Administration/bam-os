@@ -24,6 +24,28 @@ export const createCaseNotesSlice: StateCreator<CaseNotesSlice> = (set, get) => 
 
     // 3. Enqueue for background synchronization
     await offlineQueue.enqueue('CREATE_CASE_NOTE', note as unknown as Record<string, unknown>);
+
+    // 4. Record NDIS Compliance Audit Trail
+    const stateAny = get() as unknown as { addAuditLog?: (entry: unknown) => void };
+    if (typeof stateAny.addAuditLog === 'function') {
+      stateAny.addAuditLog({
+        action: 'CREATE',
+        entityType: 'soapCaseNotes',
+        entityId: note.id,
+        entityTitle: `Clinical SOAP Case Note (${note.participantName})`,
+        participantId: note.participantId,
+        participantName: note.participantName,
+        performedBy: {
+          userId: note.practitionerId,
+          userName: note.practitionerName,
+          role: 'Clinician',
+        },
+        changeSummary: `Committed clinical case note with ${note.durationMinutes}m engagement and DLP PII sanitisation.`,
+        practiceStandardRef: 'NDIS Practice Standards (Core Module 2: Governance & Clinical Records)',
+        tenantId: note.tenantId,
+        severity: 'info',
+      });
+    }
   },
   updateCaseNote: async (id: string, updates: Partial<SOAPCaseNote>) => {
     set((state) => {

@@ -21,6 +21,7 @@ import {
   Sparkles,
   RotateCcw,
   Download,
+  Printer,
 } from 'lucide-react';
 import { useManagementStore } from '../../stores';
 import { OFFICIAL_PAPL_CATALOGUE } from '../../lib/ndisPricingService';
@@ -346,13 +347,23 @@ export const BillingModule: React.FC = () => {
           {calculations.length > 0 && (
             <button
               onClick={handleExportCSV}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-lg text-xs font-semibold transition mr-2"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-lg text-xs font-semibold transition cursor-pointer"
               title="Export Claims CSV"
             >
-              <Download className="w-3.5 h-3.5" />
+              <Download className="w-3.5 h-3.5 text-teal-400" />
               <span>Export CSV</span>
             </button>
           )}
+
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-lg text-xs font-semibold transition cursor-pointer"
+            title="Print Clean Tax Invoice & Claims Statement"
+          >
+            <Printer className="w-3.5 h-3.5 text-teal-400" />
+            <span>Print Invoice</span>
+          </button>
 
           <button
             type="button"
@@ -553,7 +564,23 @@ export const BillingModule: React.FC = () => {
         {/* Real-time Calculation Breakdown (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
           {latestCalc ? (
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-sm space-y-5">
+            <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-sm space-y-5 print-invoice billing-card billing-print-area">
+              {/* Print-Only Official NDIS Tax Invoice Header */}
+              <div className="hidden print:block mb-6 border-b-2 border-slate-900 pb-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h1 className="text-xl font-bold text-slate-900 tracking-tight">BREAKTHROUGH PRACTICE MANAGEMENT</h1>
+                    <p className="text-xs text-slate-600 mt-0.5">NDIS Registered Provider #4050019283 • ABN: 48 123 456 789</p>
+                    <p className="text-xs text-slate-600">Suite 4, 120 Collins Street, Melbourne VIC 3000 • claims@breakthroughpm.com.au</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-bold text-slate-900 uppercase">NDIS Tax Invoice & Claims Schedule</div>
+                    <div className="text-xs text-slate-600 mt-1">Invoice Date: {new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
+                    <div className="text-xs text-slate-600 font-mono">PACE Ref: PACE-2026-CLAIM-{latestCalc.lineItemCode.slice(0, 5)}</div>
+                  </div>
+                </div>
+              </div>
+
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div>
                   <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
@@ -658,6 +685,16 @@ export const BillingModule: React.FC = () => {
                   <span>{integrationStatusMessage}</span>
                 </div>
               )}
+
+              {/* Print-Only Statutory Taxation & Compliance Declaration Footer */}
+              <div className="hidden print:block mt-8 pt-4 border-t border-slate-300 text-[10px] text-slate-600">
+                <p className="font-semibold text-slate-800">NDIS Statutory Taxation & Compliance Declaration:</p>
+                <p className="mt-1">Supply is GST-free pursuant to Section 38-38 of A New Tax System (Goods and Services Tax) Act 1999 (NDIS Act 2013 registered supports). Billed in strict accordance with the NDIA Pricing Arrangements and Price Limits (PAPL) 2024–2026. MMM Zone {latestCalc.mmmZone} geographic adjustment verified.</p>
+                <div className="flex justify-between mt-6 pt-4 border-t border-dashed border-slate-300">
+                  <div>Authorized Practice Signatory: _________________________________</div>
+                  <div>Date: {new Date().toLocaleDateString('en-AU')}</div>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="bg-slate-900 border border-slate-800 rounded-xl p-12 text-center text-slate-400 shadow-sm space-y-3">

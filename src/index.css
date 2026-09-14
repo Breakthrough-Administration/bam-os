@@ -8,3 +8,291 @@
   }
 }
 
+/* ==========================================================================
+   Print-Specific Styles for NDIS Clinical Reports, Statutory Dossiers & Invoices
+   ========================================================================== */
+@media print {
+  /* 1. Universal Screen-Only Elements Removal */
+  header,
+  aside,
+  nav,
+  .sidebar,
+  .command-palette,
+  .quick-action-modal,
+  .offline-indicator,
+  .no-print,
+  [data-no-print="true"],
+  button,
+  select,
+  input[type="file"],
+  input[type="button"],
+  .filter-bar,
+  .modal-backdrop,
+  .hide-on-print {
+    display: none !important;
+  }
+
+  /* 2. Paper Layout Setup */
+  @page {
+    size: A4 portrait;
+    margin: 12mm 15mm 12mm 15mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 10.5pt !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 3. Container Expansion & Background Reset */
+  main,
+  #root,
+  .app-container,
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl,
+  .max-w-4xl {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+    overflow: visible !important;
+  }
+
+  /* 4. Transform Dark Theme Palettes to High-Contrast Print Grayscale */
+  .bg-slate-900,
+  .bg-slate-950,
+  .bg-slate-800,
+  .bg-black,
+  .bg-black\/80 {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: none !important;
+  }
+
+  .text-slate-100,
+  .text-white,
+  .text-slate-200 {
+    color: #0f172a !important;
+  }
+
+  .text-slate-300,
+  .text-slate-400 {
+    color: #334155 !important;
+  }
+
+  .border-slate-800,
+  .border-slate-700,
+  .border-slate-600 {
+    border-color: #e2e8f0 !important;
+  }
+
+  /* 5. Page-Break Safeguards */
+  tr,
+  .incident-card,
+  .billing-card,
+  table,
+  .print-avoid-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* 6. Form Fields & Table Aesthetics */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  th,
+  td {
+    border: 1px solid #cbd5e1 !important;
+    padding: 6px 8px !important;
+    color: #0f172a !important;
+  }
+
+  th {
+    background-color: #f1f5f9 !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    font-size: 8pt !important;
+    letter-spacing: 0.05em !important;
+  }
+
+  /* 7. Modal Overlay Unrolling for Incident Detail Dossier */
+  .fixed.inset-0 {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+    width: 100% !important;
+  }
+
+  .fixed.inset-0 > div {
+    max-width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+}
+
+
+/* ==========================================================================
+   Print Specific Media Query (Billing Invoices & Incident Statutory Reports)
+   ========================================================================== */
+@media print {
+  @page {
+    margin: 12mm 15mm;
+    size: A4 portrait;
+  }
+
+  html,
+  body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 10pt !important;
+    line-height: 1.4 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Hide all non-printable UI scaffolding */
+  nav,
+  aside,
+  header,
+  footer,
+  button,
+  input,
+  select,
+  textarea,
+  .no-print,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Keep printable content visible and unconstrained */
+  .print-invoice,
+  .print-report,
+  .printable-document {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* Page-break preservation */
+  .print-break-inside-avoid,
+  .break-inside-avoid {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .print-break-before {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+
+  /* Transform dark mode surfaces to crisp white & high-contrast charcoal/black */
+  .bg-slate-950,
+  .bg-slate-900,
+  .bg-slate-850,
+  .bg-slate-800,
+  .bg-slate-800\/40,
+  .bg-slate-800\/60,
+  .bg-slate-900\/80 {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  .text-white,
+  .text-slate-100,
+  .text-slate-200,
+  .text-slate-300,
+  .text-slate-400,
+  .text-slate-500 {
+    color: #0f172a !important;
+  }
+
+  .text-teal-400,
+  .text-teal-300,
+  .text-emerald-400,
+  .text-emerald-300,
+  .text-purple-400,
+  .text-rose-400,
+  .text-rose-300,
+  .text-blue-400,
+  .text-amber-400 {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+  }
+
+  .border-slate-800,
+  .border-slate-700,
+  .border-slate-850 {
+    border-color: #cbd5e1 !important;
+  }
+
+  /* Clean tables */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+
+  th {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    border: 1px solid #94a3b8 !important;
+    font-weight: 700 !important;
+    padding: 6px 8px !important;
+  }
+
+  td {
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    padding: 6px 8px !important;
+  }
+
+  /* Show full link URLs if relevant, or keep clean */
+  a[href]:after {
+    content: none !important;
+  }
+}
+
+

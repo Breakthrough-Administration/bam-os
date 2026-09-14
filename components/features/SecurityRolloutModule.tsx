@@ -19,6 +19,12 @@ import {
   FileCheck,
   ChevronRight,
   Sparkles,
+  GraduationCap,
+  Users,
+  Award,
+  BookOpen,
+  UserCheck,
+  Search,
 } from 'lucide-react';
 import { saveProdaBatch, getProdaBatches } from '../../lib/integrations/prodaPersistence';
 import { useManagementStore } from '../../stores';
@@ -209,7 +215,132 @@ export const SecurityRolloutModule: React.FC = () => {
   const { tenantId } = useManagementStore();
   const [selectedPhase, setSelectedPhase] = useState<number | 'all'>('all');
   const [filterSeverity, setFilterSeverity] = useState<string>('all');
-  const [activeTab, setActiveTab] = useState<'roadmap' | 'live_tests' | 'audit_report' | 'user_approvals'>('roadmap');
+  const [activeTab, setActiveTab] = useState<'roadmap' | 'live_tests' | 'audit_report' | 'user_approvals' | 'staff_compliance'>('roadmap');
+
+  // Mandatory NDIS Training Modules
+  const MANDATORY_MODULES = [
+    'NDIS Worker Orientation (Quality, Safety & You)',
+    'Zero Tolerance: Abuse & Neglect Prevention',
+    'Positive Behaviour Support & Restrictive Practices',
+    'Infection Prevention & Safe Care Delivery',
+    'Cyber Security & PII DLP Protection',
+    'SCHADS Award Rest Breaks & Shift Safety',
+  ];
+
+  // Current Employees Mandatory Training Records
+  const [staffComplianceRecords, setStaffComplianceRecords] = useState([
+    {
+      id: 'emp-01',
+      name: 'Dr. Sarah Jenkins',
+      role: 'Lead Clinician & PBS Specialist',
+      email: 's.jenkins@breakthrough.org.au',
+      department: 'Clinical Leadership',
+      ndiswcId: 'NDISWC-VIC-890124',
+      screeningStatus: 'Verified (Valid to 2028)' as const,
+      completedModules: [
+        'NDIS Worker Orientation (Quality, Safety & You)',
+        'Zero Tolerance: Abuse & Neglect Prevention',
+        'Positive Behaviour Support & Restrictive Practices',
+        'Infection Prevention & Safe Care Delivery',
+        'Cyber Security & PII DLP Protection',
+        'SCHADS Award Rest Breaks & Shift Safety',
+      ],
+    },
+    {
+      id: 'emp-02',
+      name: 'Marcus Vance',
+      role: 'Senior Occupational Therapist',
+      email: 'm.vance@breakthrough.org.au',
+      department: 'Allied Health',
+      ndiswcId: 'NDISWC-NSW-410294',
+      screeningStatus: 'Verified (Valid to 2027)' as const,
+      completedModules: [
+        'NDIS Worker Orientation (Quality, Safety & You)',
+        'Zero Tolerance: Abuse & Neglect Prevention',
+        'Positive Behaviour Support & Restrictive Practices',
+        'Infection Prevention & Safe Care Delivery',
+        'Cyber Security & PII DLP Protection',
+        'SCHADS Award Rest Breaks & Shift Safety',
+      ],
+    },
+    {
+      id: 'emp-03',
+      name: 'Elena Rostova',
+      role: 'Disability Support Worker',
+      email: 'e.rostova@breakthrough.org.au',
+      department: 'Direct Care Delivery',
+      ndiswcId: 'NDISWC-VIC-381920',
+      screeningStatus: 'Verified (Valid to 2027)' as const,
+      completedModules: [
+        'NDIS Worker Orientation (Quality, Safety & You)',
+        'Zero Tolerance: Abuse & Neglect Prevention',
+        'Positive Behaviour Support & Restrictive Practices',
+        'Infection Prevention & Safe Care Delivery',
+        'Cyber Security & PII DLP Protection',
+      ],
+    },
+    {
+      id: 'emp-04',
+      name: 'Jarrod Murphy',
+      role: 'Support Worker (Transit Driver)',
+      email: 'j.murphy@breakthrough.org.au',
+      department: 'Direct Care Delivery',
+      ndiswcId: 'NDISWC-NSW-772183',
+      screeningStatus: 'Verified (Valid to 2028)' as const,
+      completedModules: [
+        'NDIS Worker Orientation (Quality, Safety & You)',
+        'Zero Tolerance: Abuse & Neglect Prevention',
+        'Infection Prevention & Safe Care Delivery',
+        'SCHADS Award Rest Breaks & Shift Safety',
+      ],
+    },
+    {
+      id: 'emp-05',
+      name: 'Jordan Bell',
+      role: 'Casual Support Worker',
+      email: 'j.bell@breakthrough.org.au',
+      department: 'Casual Pool',
+      ndiswcId: 'NDISWC-VIC-519203',
+      screeningStatus: 'Pending Renewal' as const,
+      completedModules: [
+        'NDIS Worker Orientation (Quality, Safety & You)',
+        'Zero Tolerance: Abuse & Neglect Prevention',
+        'Infection Prevention & Safe Care Delivery',
+      ],
+    },
+    {
+      id: 'emp-06',
+      name: 'Priya Sharma',
+      role: 'Allied Health Assistant',
+      email: 'p.sharma@breakthrough.org.au',
+      department: 'Allied Health',
+      ndiswcId: 'NDISWC-VIC-649021',
+      screeningStatus: 'Verified (Valid to 2029)' as const,
+      completedModules: [
+        'NDIS Worker Orientation (Quality, Safety & You)',
+        'Zero Tolerance: Abuse & Neglect Prevention',
+        'Positive Behaviour Support & Restrictive Practices',
+        'Infection Prevention & Safe Care Delivery',
+        'Cyber Security & PII DLP Protection',
+        'SCHADS Award Rest Breaks & Shift Safety',
+      ],
+    },
+  ]);
+
+  const [staffSearchQuery, setStaffSearchQuery] = useState('');
+
+  const toggleModuleForStaff = (staffId: string, moduleName: string) => {
+    setStaffComplianceRecords((prev) =>
+      prev.map((staff) => {
+        if (staff.id !== staffId) return staff;
+        const exists = staff.completedModules.includes(moduleName);
+        const updated = exists
+          ? staff.completedModules.filter((m) => m !== moduleName)
+          : [...staff.completedModules, moduleName];
+        return { ...staff, completedModules: updated };
+      })
+    );
+  };
 
   // Registered applicant accounts awaiting administrative review (Zero-Trust)
   const [pendingApplicants, setPendingApplicants] = useState([
@@ -490,6 +621,17 @@ export const SecurityRolloutModule: React.FC = () => {
           >
             <ShieldCheck className="w-4 h-4 inline-block mr-2 text-purple-500" />
             Zero-Trust User Provisioning
+          </button>
+          <button
+            onClick={() => setActiveTab('staff_compliance')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'staff_compliance'
+                ? 'bg-slate-900 text-white shadow-sm'
+                : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+            }`}
+          >
+            <GraduationCap className="w-4 h-4 inline-block mr-2 text-teal-500" />
+            Staff Compliance Summary
           </button>
         </div>
 
@@ -875,6 +1017,254 @@ export const SecurityRolloutModule: React.FC = () => {
               Role elevation events trigger an immutable audit entry in <code className="bg-slate-200 text-slate-800 px-1 py-0.5 rounded">/tenants/{'{tenantId}'}/auditLogs</code> with the approver&apos;s UID, practitioner screening timestamp, and assigned permissions. Unauthorized role self-assignments are blocked at the Firestore CEL rule boundary.
             </p>
           </div>
+        </div>
+      )}
+
+      {/* Staff Compliance Summary View */}
+      {activeTab === 'staff_compliance' && (
+        <div className="space-y-6">
+          {/* Top Aggregated Compliance Overview */}
+          {(() => {
+            const totalModulesAcrossAll = staffComplianceRecords.length * MANDATORY_MODULES.length;
+            const totalCompletedAcrossAll = staffComplianceRecords.reduce(
+              (acc, s) => acc + s.completedModules.length,
+              0
+            );
+            const overallPercentage = Math.round((totalCompletedAcrossAll / totalModulesAcrossAll) * 100);
+            const fullyCompliantCount = staffComplianceRecords.filter(
+              (s) => s.completedModules.length === MANDATORY_MODULES.length
+            ).length;
+            const pendingRenewalCount = staffComplianceRecords.filter(
+              (s) => s.screeningStatus === 'Pending Renewal' || s.completedModules.length < MANDATORY_MODULES.length
+            ).length;
+
+            const filteredStaff = staffComplianceRecords.filter(
+              (s) =>
+                s.name.toLowerCase().includes(staffSearchQuery.toLowerCase()) ||
+                s.role.toLowerCase().includes(staffSearchQuery.toLowerCase()) ||
+                s.department.toLowerCase().includes(staffSearchQuery.toLowerCase()) ||
+                s.ndiswcId.toLowerCase().includes(staffSearchQuery.toLowerCase())
+            );
+
+            return (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  {/* Master Organization Compliance Card */}
+                  <div className="md:col-span-2 p-5 rounded-xl bg-slate-900 border border-slate-800 text-white shadow-sm flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs uppercase font-bold tracking-wider text-slate-400">
+                          Mandatory Training Compliance (NDIS Practice Standards)
+                        </span>
+                        <Award className="w-5 h-5 text-teal-400" />
+                      </div>
+                      <div className="flex items-baseline gap-3">
+                        <span className="text-3xl font-black text-white">{overallPercentage}%</span>
+                        <span className="text-xs text-slate-300">
+                          {totalCompletedAcrossAll} of {totalModulesAcrossAll} Module Certifications Active
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Master Progress Bar */}
+                    <div className="mt-4">
+                      <div className="flex justify-between text-xs text-slate-400 mb-1.5 font-medium">
+                        <span>Workforce Readiness</span>
+                        <span className={overallPercentage >= 85 ? 'text-emerald-400 font-bold' : 'text-amber-400'}>
+                          {overallPercentage >= 85 ? 'NDIS Audit Compliant' : 'Remediation Required'}
+                        </span>
+                      </div>
+                      <div className="w-full bg-slate-800 h-3 rounded-full overflow-hidden flex">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${
+                            overallPercentage >= 90
+                              ? 'bg-gradient-to-r from-emerald-500 to-teal-400'
+                              : overallPercentage >= 75
+                              ? 'bg-gradient-to-r from-amber-500 to-emerald-400'
+                              : 'bg-gradient-to-r from-rose-500 to-amber-400'
+                          }`}
+                          style={{ width: `${overallPercentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Fully Compliant Staff Count */}
+                  <div className="p-5 rounded-xl bg-slate-900 border border-slate-800 text-white shadow-sm flex flex-col justify-between">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs uppercase font-bold tracking-wider text-slate-400">
+                        100% Certified Staff
+                      </span>
+                      <UserCheck className="w-5 h-5 text-emerald-400" />
+                    </div>
+                    <div>
+                      <span className="text-3xl font-black text-emerald-400">
+                        {fullyCompliantCount}/{staffComplianceRecords.length}
+                      </span>
+                      <p className="text-xs text-slate-400 mt-1">
+                        Completed all 6 NDIS Quality & Safeguards Commission modules.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Modules Pending Review */}
+                  <div className="p-5 rounded-xl bg-slate-900 border border-slate-800 text-white shadow-sm flex flex-col justify-between">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs uppercase font-bold tracking-wider text-slate-400">
+                        Action / Renewals
+                      </span>
+                      <AlertTriangle className="w-5 h-5 text-amber-400" />
+                    </div>
+                    <div>
+                      <span className="text-3xl font-black text-amber-400">{pendingRenewalCount}</span>
+                      <p className="text-xs text-slate-400 mt-1">
+                        Workers with pending orientation modules or screening checks.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Filter and Search Bar */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                    <input
+                      type="text"
+                      value={staffSearchQuery}
+                      onChange={(e) => setStaffSearchQuery(e.target.value)}
+                      placeholder="Search employee by name, role, department or NDISWC..."
+                      className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-9 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-400 focus:outline-none focus:border-teal-500"
+                    />
+                  </div>
+                  <div className="text-xs text-slate-400 flex items-center gap-2">
+                    <span className="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+                    <span>Click any module chip to toggle or log verified completion status.</span>
+                  </div>
+                </div>
+
+                {/* Staff Cards with Individual Progress Bars */}
+                <div className="space-y-4">
+                  {filteredStaff.map((staff) => {
+                    const completed = staff.completedModules.length;
+                    const total = MANDATORY_MODULES.length;
+                    const percent = Math.round((completed / total) * 100);
+                    const isFullyCompliant = completed === total;
+
+                    return (
+                      <div
+                        key={staff.id}
+                        className="p-5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition shadow-sm space-y-3"
+                      >
+                        {/* Worker Header & Core Info */}
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                          <div>
+                            <div className="flex items-center gap-2.5">
+                              <h4 className="font-bold text-sm text-slate-100">{staff.name}</h4>
+                              <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                                {staff.role}
+                              </span>
+                              <span className="text-[10px] text-slate-400">{staff.department}</span>
+                            </div>
+                            <div className="flex items-center gap-3 text-xs text-slate-400 mt-1">
+                              <span className="font-mono text-slate-300">{staff.ndiswcId}</span>
+                              <span>•</span>
+                              <span
+                                className={`font-semibold ${
+                                  staff.screeningStatus.includes('Verified') ? 'text-emerald-400' : 'text-amber-400'
+                                }`}
+                              >
+                                {staff.screeningStatus}
+                              </span>
+                              <span>•</span>
+                              <span className="text-slate-400">{staff.email}</span>
+                            </div>
+                          </div>
+
+                          {/* Individual Progress Percentage Badge */}
+                          <div className="flex items-center gap-3 shrink-0">
+                            <div className="text-right">
+                              <div className="text-base font-black text-white">{percent}% Completed</div>
+                              <div className="text-[10px] text-slate-400">
+                                {completed} of {total} Modules
+                              </div>
+                            </div>
+                            <div
+                              className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold text-xs ${
+                                isFullyCompliant
+                                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                                  : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                              }`}
+                            >
+                              {isFullyCompliant ? <CheckCircle2 className="w-5 h-5" /> : `${completed}/${total}`}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Individual Progress Bar */}
+                        <div className="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full transition-all duration-300 ${
+                              isFullyCompliant
+                                ? 'bg-emerald-500'
+                                : percent >= 66
+                                ? 'bg-amber-500'
+                                : 'bg-rose-500'
+                            }`}
+                            style={{ width: `${percent}%` }}
+                          />
+                        </div>
+
+                        {/* Module Completion Chips (Clickable) */}
+                        <div className="pt-1">
+                          <div className="text-[11px] font-semibold text-slate-400 mb-2">
+                            Mandatory Training Modules:
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {MANDATORY_MODULES.map((mod) => {
+                              const isDone = staff.completedModules.includes(mod);
+                              return (
+                                <button
+                                  key={mod}
+                                  type="button"
+                                  onClick={() => toggleModuleForStaff(staff.id, mod)}
+                                  className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition flex items-center gap-1.5 border ${
+                                    isDone
+                                      ? 'bg-emerald-950/40 text-emerald-300 border-emerald-500/40 hover:bg-emerald-900/60'
+                                      : 'bg-slate-800/80 text-slate-400 border-slate-700 hover:border-amber-500/50 hover:text-amber-300'
+                                  }`}
+                                  title={`Click to toggle completion for ${mod}`}
+                                >
+                                  {isDone ? (
+                                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                  ) : (
+                                    <span className="w-3.5 h-3.5 rounded-full border border-slate-500 inline-block shrink-0" />
+                                  )}
+                                  <span>{mod}</span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Statutory Reference Footer */}
+                <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 text-xs flex items-start gap-3">
+                  <ShieldCheck className="w-5 h-5 text-teal-400 shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-semibold text-slate-200">
+                      NDIS Quality and Safeguards Commission (Worker Screening & Training Rules 2018)
+                    </div>
+                    <p className="mt-0.5 text-slate-400">
+                      All registered NDIS provider personnel delivering direct support or key clinical governance must maintain valid NDIS Worker Screening clearance and evidence of completed mandatory orientation modules in their personnel portfolio prior to unmonitored participant engagement.
+                    </p>
+                  </div>
+                </div>
+              </>
+            );
+          })()}
         </div>
       )}
     </div>

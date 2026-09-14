@@ -118,6 +118,31 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["id", "tenantId", "serviceType", "resourceId", "title", "createdByUserId", "createdAt"]
+    },
+    "soapDraft": {
+      "title": "Clinical SOAP Draft Note",
+      "description": "Transient autosaved case note draft preventing clinical data loss during network disruptions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "tenantId": { "type": "string", "maxLength": 64 },
+        "participantId": { "type": "string", "maxLength": 64 },
+        "participantName": { "type": "string", "maxLength": 128 },
+        "practitionerId": { "type": "string", "maxLength": 128 },
+        "practitionerName": { "type": "string", "maxLength": 128 },
+        "sessionDate": { "type": "string", "maxLength": 32 },
+        "durationMinutes": { "type": "number" },
+        "subjective": { "type": "string", "maxLength": 6000 },
+        "objective": { "type": "string", "maxLength": 6000 },
+        "assessment": { "type": "string", "maxLength": 6000 },
+        "plan": { "type": "string", "maxLength": 6000 },
+        "goal1Rating": { "type": "number" },
+        "goal2Rating": { "type": "number" },
+        "restrictivePracticeObserved": { "type": "boolean" },
+        "lastSavedAt": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["draft", "saved", "recovering"] }
+      },
+      "required": ["id", "participantId", "practitionerId", "lastSavedAt"]
     }
   },
   "firestore": {
@@ -140,6 +165,10 @@
     "/tenants/{tenantId}/workspaceResources/{resourceId}": {
       "schema": "workspaceResource",
       "description": "Linked Google Workspace clinical resources index"
+    },
+    "/soapDrafts/{draftId}": {
+      "schema": "soapDraft",
+      "description": "Autosaved clinical progress note drafts cache"
     }
   }
 }

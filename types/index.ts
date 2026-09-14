@@ -38,6 +38,15 @@ export type AuthorisationStatus =
   | 'fading_in_progress'
   | 'expired';
 
+export interface FadingMilestone {
+  date: string;
+  previousFrequencyPerWeek: number;
+  newFrequencyPerWeek: number;
+  fadingPercentage: number;
+  clinicianNotes?: string;
+  recordedBy: string;
+}
+
 export interface RestrictivePracticeProtocol {
   id: string;
   tenantId: string;
@@ -58,6 +67,13 @@ export interface RestrictivePracticeProtocol {
   currentFrequencyPerWeek: number;
   targetDateForElimination: string;
   deEscalationPrerequisites: string[];
+  fadingMilestones?: FadingMilestone[];
+  signature?: {
+    signedBy: string;
+    timestamp: string;
+    hash: string;
+    role?: string;
+  };
 }
 
 export interface RestrictivePracticeLog {
@@ -90,6 +106,16 @@ export interface RestrictivePracticeLog {
 
 export * from './pricing';
 export * from './incident';
+export * from './audit';
+
+export interface NDISGoal {
+  id: string;
+  title: string;
+  description: string;
+  category: 'core' | 'capacity_building' | 'capital';
+  status: 'not_started' | 'in_progress' | 'achieved' | 'abandoned';
+  targetDate: string;
+}
 
 export interface Participant {
   id: string;
@@ -116,6 +142,10 @@ export interface Participant {
   contactEmergencyPhone: string;
   behaviourSupportPractitioner: string;
   alliedHealthKeyWorker: string;
+  goals?: NDISGoal[];
+  status?: 'active' | 'inactive' | 'legacy_archived';
+  isArchived?: boolean;
+  archivedAt?: string;
 }
 
 export interface RosterShift {
@@ -172,4 +202,24 @@ export interface SOAPCaseNote {
     timestamp: string;
     hash: string;
   };
+}
+
+export interface SOAPDraft {
+  id: string;
+  tenantId?: string;
+  participantId: string;
+  participantName: string;
+  practitionerId: string;
+  practitionerName: string;
+  sessionDate: string;
+  durationMinutes: number;
+  subjective: string;
+  objective: string;
+  assessment: string;
+  plan: string;
+  goal1Rating: 1 | 2 | 3 | 4 | 5;
+  goal2Rating: 1 | 2 | 3 | 4 | 5;
+  restrictivePracticeObserved: boolean;
+  lastSavedAt: string;
+  status?: 'draft' | 'saved';
 }

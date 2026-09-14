@@ -12,6 +12,7 @@ import {
   Ambulance,
   Shield,
   Building,
+  Printer,
 } from 'lucide-react';
 import { IncidentReport } from '../../../types/incident';
 
@@ -33,7 +34,33 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl space-y-6 p-6">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl space-y-6 p-6 print-report incident-card incident-print-area">
+        {/* Print-Only Official NDIS Quality and Safeguards Commission Dossier Header */}
+        <div className="hidden print:block mb-6 border-b-2 border-slate-900 pb-4">
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-lg font-bold text-slate-900 tracking-tight">
+                COMMONWEALTH OF AUSTRALIA — NDIS QUALITY AND SAFEGUARDS COMMISSION
+              </h1>
+              <p className="text-xs font-semibold text-slate-700 uppercase mt-0.5">
+                Statutory Incident Notification & Investigation Dossier (Section 73Z Reportable Incidents)
+              </p>
+              <p className="text-[11px] text-slate-600 mt-1">
+                Registered Provider: Breakthrough Practice Management OS • Provider Reg #: 4050019283 • Tenant: {incident.tenantId}
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="text-xs font-bold text-slate-900 font-mono">INCIDENT: {incident.incidentNumber}</div>
+              <div className="text-[11px] text-slate-600 mt-0.5">
+                Printed: {new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}
+              </div>
+              {incident.ndisReferenceNumber && (
+                <div className="text-xs text-emerald-700 font-bold font-mono mt-0.5">Commission Ref: {incident.ndisReferenceNumber}</div>
+              )}
+            </div>
+          </div>
+        </div>
+
         {/* Modal Header */}
         <div className="flex items-start justify-between border-b border-slate-800 pb-4">
           <div className="space-y-1">
@@ -66,12 +93,22 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
             </p>
           </div>
 
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-800"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => window.print()}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold transition cursor-pointer"
+              title="Print Clean Incident Dossier to Paper or PDF"
+            >
+              <Printer className="w-3.5 h-3.5 text-rose-400" />
+              <span>Print Dossier</span>
+            </button>
+            <button
+              onClick={onClose}
+              className="text-slate-400 hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-800"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Statutory Notification Banner */}
@@ -247,8 +284,33 @@ export const IncidentDetailModal: React.FC<IncidentDetailModalProps> = ({
           </div>
         )}
 
+        {/* Print-Only Statutory Sign-off block */}
+        <div className="hidden print:block mt-8 pt-4 border-t-2 border-slate-800 text-[10px] text-slate-700">
+          <p className="font-bold text-slate-900 uppercase">Provider Investigation & Mandatory Sign-Off Certification:</p>
+          <p className="mt-0.5">
+            I certify that the information contained in this incident notification dossier is accurate, factual, and compliant with the National Disability Insurance Scheme (Incident Management and Reportable Incidents) Rules 2018 and Section 73Z of the NDIS Act 2013.
+          </p>
+          <div className="grid grid-cols-2 gap-8 mt-6 pt-4 border-t border-dashed border-slate-400">
+            <div>
+              <p>Investigating Clinician / Officer: __________________________________</p>
+              <p className="mt-2 text-[10px]">Position: Lead Clinical Practice Auditor</p>
+            </div>
+            <div>
+              <p>Signature: __________________________________</p>
+              <p className="mt-2 text-[10px]">Date of Certification: ____ / ____ / ________</p>
+            </div>
+          </div>
+        </div>
+
         {/* Modal Footer */}
-        <div className="flex items-center justify-end border-t border-slate-800 pt-4">
+        <div className="flex items-center justify-end gap-2 border-t border-slate-800 pt-4">
+          <button
+            onClick={() => window.print()}
+            className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-slate-200 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition-colors cursor-pointer"
+          >
+            <Printer className="w-3.5 h-3.5 text-rose-400" />
+            <span>Print Dossier</span>
+          </button>
           <button
             onClick={onClose}
             className="px-5 py-2 text-xs font-semibold text-slate-200 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition-colors"
